@@ -30,8 +30,38 @@ abstract class Scope[+B,F[+_],+A] {
   def foldRight[M](m: M)(f: (A, => M) => M)(implicit F: Foldable[F]) =
     unscope.foldRight(m)((v, b) => v.foldRight(b)((fa, bz) => fa.foldRight(bz)(f)))
 
+  /** Bind a variable in a scope. */
   def bind[C](f: A => F[C])(implicit M: Monad[F]): Scope[B,F,C] =
     Scope[B,F,C](unscope map (_.map(_ flatMap f)))
+
+  /**
+   * Enter a scope, instantiating all bound variables.
+   *
+   * {{{
+   * scala> abstract1('a', "abracadabra".toList).instantiate(_ => "foo".toList).mkString
+   * res0: String = foobrfoocfoodfoobrfoo
+   * }}}
+   */
+  def instantiate[C >: B, D >: A](k: C => F[D])(implicit M: Monad[F]): F[D] =
+    unscope flatMap {
+      case B(b) => k(b)
+      case F(a) => a
+    }
+
+  /** Enter a scope that binds one variable, instantiating it. */
+  def instantiate1[D >: A](e: F[D])(implicit M: Monad[F]): F[D] =
+    instantiate[B,D](_ => e)
+
+  /**
+   * Quotients out the possible placements of `F` in this `Scope` by distributing them all
+   * to the leaves. This yields a more traditional de Bruijn indexing scheme for bound
+   * variables.
+   */
+  def toDeBruijn(implicit M: Monad[F]): F[Var[B, A]] =
+    unscope flatMap {
+      case F(e) => e.map(F(_))
+      case B(b) => M.pure(B(b))
+    }
 
   import Show._
   override def toString = Scope.scopeShow[Any,Any,Any](showA, showA, showA, showA).shows(this.asInstanceOf[Scope[Any,Any,Any]])

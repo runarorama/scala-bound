@@ -54,7 +54,7 @@ package object bound {
    * Capture some free variables in an expression to yield a scope with bound variables in `b`.
    *
    * {{{
-   * scala> abstrakt("aeiou".toList)(x => { val i = "bario".indexOf(x); option(i >= 0, i)).shows }
+   * scala> abstrakt("aeiou".toList)(x => Some("bario".indexOf(x)).filter(_ >= 0)).shows
    * res0: String = Scope([B(1),F([e]),B(3),B(4),F([u])])
    * }}}
    */
@@ -104,15 +104,10 @@ package object bound {
    * res0: String = foobrfoocfoodfoobrfoo
    * }}}
    */
-  def instantiate[F[+_]:Monad,A,B](e: Scope[B,F,A])(k: B => F[A]): F[A] =
-    e.unscope flatMap {
-      case B(b) => k(b)
-      case F(a) => a
-    }
+  def instantiate[F[+_]:Monad,A,B](e: Scope[B,F,A])(k: B => F[A]): F[A] = e instantiate k
 
   /** Enter a scope that binds one variable, instantiating it. */
-  def instantiate1[F[+_]:Monad,N,A](e: F[A], s: Scope[N, F, A]): F[A] =
-    instantiate(s)(_ => e)
+  def instantiate1[F[+_]:Monad,N,A](e: F[A], s: Scope[N, F, A]): F[A] = s instantiate1 e
 
   /**
    * Quotients out the possible placements of `F` in `Scope` by distributing them all
