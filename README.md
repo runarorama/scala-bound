@@ -3,7 +3,7 @@ Bound
 
 A Scala port of [Edward Kmett's Bound library for Haskell](https://github.com/ekmett/bound).
 
-This library provides convenient combinators for working with "locally-nameless" terms. These can be useful when writing a type checker, evalator, parser, or pretty printer for terms that contain binders like forall or lambda, as they ease the task of avoiding variable capture and testing for alpha-equivalence.
+This library provides convenient combinators for working with "locally-nameless" terms. These can be useful when writing a type checker, evaluator, parser, or pretty-printer for terms that contain binders like forall or lambda. They ease the task of avoiding variable capture and testing for alpha-equivalence.
 
 Example:
 
