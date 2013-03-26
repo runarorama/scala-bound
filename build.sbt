@@ -1,4 +1,4 @@
-name := "legato"
+name := "bound"
 
 resolvers += "Typesafe Sonatype Snapshots" at "http://repo.typesafe.com/typesafe/sonatype-snapshots/"
 
