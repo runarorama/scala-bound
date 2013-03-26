@@ -27,9 +27,11 @@ Example:
       }
     }
 
+    // Lambda abstraction smart constructor.
     def lam[A:Equal](v: A, b: Exp[A]): Exp[A] =
       Lam(abstract1(v, b))
 
+    // Weak-head normal form evaluator.
     def whnf[A](e: Exp[A]): Exp[A] = e match {
       case App(f,a) => whnf(f) match {
         case Lam(b) => whnf(instantiate1(a,b))
