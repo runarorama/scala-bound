@@ -7,6 +7,7 @@ This library provides convenient combinators for working with "locally-nameless"
 
 Example:
 
+    ```scala
     import scalaz._
     import scalaz.std.string._
     import bound._
@@ -39,6 +40,7 @@ Example:
       }
       case e => e
     }
+    ```
 
 We can then construct and evaluate lambda terms in the console. The `const` function contains two nested scopes. The term `"x"` is free in the inner scope (indicated by `\/-`) and bound in the outer scope (indicated by `-\/`).
 
