@@ -1,7 +1,5 @@
 package bound
 
-import language.higherKinds
-
 import scalaz._
 import Scalaz._
 

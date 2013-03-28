@@ -1,7 +1,5 @@
 package bound
 
-import language.higherKinds
-
 import scalaz.{Name => _, _}
 import scalaz.syntax.monad._
 import scalaz.syntax.equal._

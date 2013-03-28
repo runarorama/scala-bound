@@ -1,6 +1,3 @@
-import language.higherKinds
-import language.implicitConversions
-
 import scalaz._
 import Scalaz._
 
