@@ -7,7 +7,6 @@ dist/*
 target/
 lib_managed/
 src_managed/
-project/
 .lib/
 
 # Scala-IDE specific
