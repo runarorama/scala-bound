@@ -44,7 +44,15 @@ object build extends Build {
     )
   )
 
-  lazy val f0 = RootProject(uri("https://github.com/joshcough/f0.git"))
+  lazy val f0 = {
+    // force sbt to get the latest version of f0
+    // 'sbt update' doesn't seem to get the latest even though this says that it should
+    // http://stackoverflow.com/questions/8864317/how-do-i-refresh-updated-git-dependency-artifacts-in-sbt
+    // so instead we have to go to github and get the latest version.
+    val sha = scala.io.Source.fromURL("https://api.github.com/repos/joshcough/f0/commits?sha=master").
+      takeWhile(_ != ',').mkString.dropWhile(_!=':').drop(2).dropRight(1)
+    RootProject(uri("https://github.com/joshcough/f0.git#" + sha))
+  }
 
   lazy val f0Binding = Project(
     id           = "f0-binding",

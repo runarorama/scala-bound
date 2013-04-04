@@ -4,7 +4,7 @@
 # Author: Paul Phillips <paulp@typesafe.com>
 
 # todo - make this dynamic
-declare -r sbt_release_version=0.12.2-RC1
+declare -r sbt_release_version=0.12.3
 declare -r sbt_snapshot_version=0.13.0-SNAPSHOT
 
 unset sbt_jar sbt_dir sbt_create sbt_snapshot sbt_launch_dir
@@ -449,7 +449,7 @@ fi
 execRunner "$java_cmd" \
   $(get_mem_opts $sbt_mem) \
   $(get_jvm_opts) \
-  ${java_args[@]} \
+  ${java_args[@]} -Dfile.encoding=UTF-8\
   -jar "$sbt_jar" \
   "set logLevel in Global := Level.$log_level" \
   "${sbt_commands[@]}" \
