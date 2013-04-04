@@ -49,7 +49,7 @@ object build extends Build {
   lazy val f0Binding = Project(
     id           = "f0-binding",
     base         = file("f0-binding"),
-    dependencies = Seq(core),
+    dependencies = Seq(core, f0),
     settings     = standardSettings ++ Seq[Sett](
       name := "scala-bound-f0-binding",
       libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0-SNAPSHOT"
@@ -59,7 +59,7 @@ object build extends Build {
   lazy val tests = Project(
     id = "tests",
     base = file("tests"),
-    dependencies = Seq(core, scalacheckBinding % "test"),
+    dependencies = Seq(core, f0Binding, scalacheckBinding % "test"),
     settings = standardSettings ++ Seq[Sett](
       name := "scala-bound-tests",
       publishArtifact := false,
