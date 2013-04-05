@@ -7,6 +7,8 @@ object build extends Build {
   type Sett = Project.Setting[_]
 
   lazy val standardSettings = Defaults.defaultSettings ++ Seq[Sett](
+    organization := "bound",
+    version := "0.2-SNAPSHOT",
     resolvers += "Typesafe Sonatype Snapshots" at "http://repo.typesafe.com/typesafe/sonatype-snapshots/",
     scalaVersion := "2.10.1",
     crossScalaVersions := Seq("2.9.2", "2.9.3", "2.10.0", "2.10.1"),
@@ -28,17 +30,17 @@ object build extends Build {
     id = "core",
     base = file("core"),
     settings = standardSettings ++ Seq[Sett](
-      name := "scala-bound-core",
+      name := "bound-core",
       libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0-SNAPSHOT"
     )
   )
 
   lazy val scalacheckBinding = Project(
-    id           = "scalacheck-binding",
+    id           = "bound-scalacheck-binding",
     base         = file("scalacheck-binding"),
     dependencies = Seq(core),
     settings     = standardSettings ++ Seq[Sett](
-      name := "scala-bound-scalacheck-binding",
+      name := "bound-scalacheck-binding",
       libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0-SNAPSHOT",
       libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.10.0"
     )
@@ -55,21 +57,21 @@ object build extends Build {
   }
 
   lazy val f0Binding = Project(
-    id           = "f0-binding",
+    id           = "bound-f0-binding",
     base         = file("f0-binding"),
     dependencies = Seq(core, f0),
     settings     = standardSettings ++ Seq[Sett](
-      name := "scala-bound-f0-binding",
+      name := "bound-f0-binding",
       libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0-SNAPSHOT"
     )
   ).dependsOn(f0)
 
   lazy val tests = Project(
-    id = "tests",
+    id = "bound-tests",
     base = file("tests"),
     dependencies = Seq(core, f0Binding, scalacheckBinding % "test"),
     settings = standardSettings ++ Seq[Sett](
-      name := "scala-bound-tests",
+      name := "bound-tests",
       publishArtifact := false,
       libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.10.0"
     )
