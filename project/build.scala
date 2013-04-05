@@ -8,7 +8,7 @@ object build extends Build {
 
   lazy val standardSettings = Defaults.defaultSettings ++ Seq[Sett](
     resolvers += "Typesafe Sonatype Snapshots" at "http://repo.typesafe.com/typesafe/sonatype-snapshots/",
-    scalaVersion := "2.9.2",
+    scalaVersion := "2.10.1",
     crossScalaVersions := Seq("2.9.2", "2.9.3", "2.10.0", "2.10.1"),
     scalacOptions <++= (scalaVersion) map { sv =>
       val versionDepOpts =
