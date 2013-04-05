@@ -11,6 +11,12 @@ package object bound {
     }
   }
 
+  implicit def varEqual1[A:Equal]: Equal1[({type λ[α] = Var[A,α]})#λ] =
+    new Equal1[({type λ[α] = Var[A,α]})#λ] {
+      def equal[B](a1: Var[A,B], a2: Var[A,B])(implicit a: Equal[B]): Boolean =
+        implicitly[Equal[Var[A,B]]].equal(a1, a2)
+    }
+
   import Scope._
 
   /**

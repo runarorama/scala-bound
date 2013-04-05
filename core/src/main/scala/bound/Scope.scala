@@ -78,6 +78,17 @@ object Scope {
       override def shows(s: Scope[B,F,A]) = "Scope(%s)".format(s.unscope.shows)
     }
 
+  implicit def scopeEqual[B,F[+_],A](implicit EB: Equal[B], M: Monad[F], EF: Equal1[F], EA: Equal[A]): Equal[Scope[B,F,A]] =
+    new Equal[Scope[B,F,A]] {
+      def equal(a: Scope[B,F,A], b: Scope[B,F,A]): Boolean = scopeEqual1[B,F].equal(a, b)
+    }
+
+  implicit def scopeEqual1[B,F[+_]](implicit EB: Equal[B], M: Monad[F], E1F: Equal1[F]): Equal1[({type λ[α] = Scope[B,F,α]})#λ] =
+    new Equal1[({type λ[α] = Scope[B,F,α]})#λ] {
+      def equal[A](a: Scope[B,F,A], b: Scope[B,F,A])(implicit EA: Equal[A]): Boolean =
+        E1F.equal(fromScope(a), fromScope(b))
+    }
+
   implicit def scopeMonad[F[+_]:Monad,D]: Monad[({type λ[α] = Scope[D,F,α]})#λ] =
     new Monad[({type λ[α] = Scope[D,F,α]})#λ] {
       val M = Monad[F]

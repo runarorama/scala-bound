@@ -6,9 +6,7 @@ import org.scalacheck.Prop._
 
 abstract class BoundProperties(name: String) extends Properties(name){
 
-  def trying(f: => Prop) = secure {
-    try f catch { case e: Throwable  => e.printStackTrace; throw e }
+  def test(name:String)(f: => Prop) = property(name) = secure {
+    try f catch { case e: java.lang.Throwable  => e.printStackTrace(System.err); throw e }
   }
-
-  def test(name:String)(f: => Prop) = property(name) = trying(f)
 }
