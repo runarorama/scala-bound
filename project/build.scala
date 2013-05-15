@@ -76,4 +76,16 @@ object build extends Build {
       libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.10.0"
     )
   )
+
+  lazy val examples = Project(
+    id           = "bound-examples",
+    base         = file("examples"),
+    dependencies = Seq(core, scalacheckBinding),
+    settings     = standardSettings ++ Seq[Sett](
+      name := "bound-examples",
+      libraryDependencies ++= Seq(
+        "org.scalaz" %% "scalaz-core" % "7.0-SNAPSHOT"
+      )
+    )
+  ).dependsOn(f0)
 }
