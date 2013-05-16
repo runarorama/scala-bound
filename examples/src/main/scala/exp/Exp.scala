@@ -31,10 +31,54 @@ object Exp {
   sealed trait Exp[+A] {
     def *[B >: A](e:Exp[B]) = App(this, e)
   }
-    case class V[+A](a: A) extends Exp[A]
-    case class Lam[+A](s: Scope[Unit, Exp, A]) extends Exp[A]
-    case class App[+A](f: Exp[A], x: Exp[A]) extends Exp[A]
-    case class Let[+A](bindings: List[Scope[Int, Exp, A]], body: Scope[Int, Exp, A]) extends Exp[A]
+
+  object V {
+    def apply[A](a: => A): Exp[A] = new V(a)
+    def unapply[A](e: Exp[A]): Option[A] = e match {
+      case v:V[A] => Some(v.get)
+      case _ => None
+    }
+  }
+  class V[+A](a: => A) extends Exp[A]{
+    lazy val get = a
+    override def toString = s"V($a)"
+  }
+
+  object Lam{
+    def apply[A](s: => Scope[Unit, Exp, A]): Exp[A] = new Lam(s)
+    def unapply[A](e: Exp[A]): Option[Scope[Unit, Exp, A]] = e match {
+      case l:Lam[A] => Some(l.get)
+      case _ => None
+    }
+  }
+  class Lam[+A](s: => Scope[Unit, Exp, A]) extends Exp[A] {
+    lazy val get = s
+    override def toString = s"Lam($s)"
+  }
+
+  object App {
+    def apply[A](f: => Exp[A], x: => Exp[A]): Exp[A] = new App(f, x)
+    def unapply[A](e: Exp[A]): Option[(Exp[A], Exp[A])] = e match {
+      case a:App[A] => Some(a.get)
+      case _ => None
+    }
+  }
+  class App[+A](f: => Exp[A], x: => Exp[A]) extends Exp[A] {
+    lazy val get = (f, x)
+    override def toString = s"App($f, $x)"
+  }
+
+  object Let {
+    def apply[A](bindings: => List[Scope[Int, Exp, A]], body: => Scope[Int, Exp, A]): Exp[A] = new Let(bindings, body)
+    def unapply[A](e: Exp[A]): Option[(List[Scope[Int, Exp, A]], Scope[Int, Exp, A])] = e match {
+      case l:Let[A] => Some(l.get)
+      case _ => None
+    }
+  }
+  class Let[+A](bindings: => List[Scope[Int, Exp, A]], body: => Scope[Int, Exp, A]) extends Exp[A]{
+    lazy val get = (bindings, body)
+    override def toString = s"Let($bindings, $body)"
+  }
 
   implicit def expMonad: Monad[Exp] = new Monad[Exp]{
     def point[A](a: => A) = V(a)
@@ -74,19 +118,15 @@ object Exp {
   }
 
   def whnf[A](e: Exp[A]): Exp[A] = e match {
-    case V(_)       => e
+    case V(_)      => e
     case Lam(_)    => e
     case App(f, a) => whnf(f) match {
-      case Lam(b)  => instantiate1(a, b)
-      case _        => App(f, a)
+      case Lam(b)  => whnf(instantiate1(a, b))
+      case _       => App(f, a)
     }
     case Let(bs, b)  =>
       def inst = instantiateR((i: Int) => es(i)) _ // Scope[Int,Exp,A] => Exp[A]
-      def es: Stream[Exp[A]] = {
-        val res = bs.toStream.map(inst)
-        println(res)
-        res
-      }
+      def es: Stream[Exp[A]] = bs.toStream.map(inst)
       whnf(inst(b))
   }
 
@@ -142,6 +182,11 @@ object Exp {
   , ("n703",   V("sumto") * V("n37"))
   , ("n720",   V("fac") * V("n6"))
   ), (V("eqnat") * V("n720") * (V("add") * V("n703") * V("n17"))))).get
+
+
+  def main(args: Array[String]){
+    println(nf(cooked))
+  }
 
 }
 
