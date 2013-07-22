@@ -10,8 +10,8 @@ object build extends Build {
     organization := "bound",
     version := "0.2-SNAPSHOT",
     resolvers += "Typesafe Sonatype Snapshots" at "http://repo.typesafe.com/typesafe/sonatype-snapshots/",
-    scalaVersion := "2.10.1",
-    crossScalaVersions := Seq("2.9.2", "2.9.3", "2.10.0", "2.10.1"),
+    scalaVersion := "2.10.2",
+    crossScalaVersions := Seq("2.9.2", "2.9.3", "2.10.0", "2.10.1", "2.10.2"),
     scalacOptions <++= (scalaVersion) map { sv =>
       val versionDepOpts =
         if (sv startsWith "2.9") Seq()
