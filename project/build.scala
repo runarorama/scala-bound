@@ -8,7 +8,7 @@ object build extends Build {
 
   lazy val standardSettings = Defaults.defaultSettings ++ Seq[Sett](
     organization := "bound",
-    version := "1.1",
+    version := "1.2",
     resolvers += "Typesafe Sonatype Snapshots" at "http://repo.typesafe.com/typesafe/sonatype-snapshots/",
     resolvers += "joshcough bintray maven" at "http://dl.bintray.com/joshcough/maven/",
     scalaVersion := "2.10.2",
