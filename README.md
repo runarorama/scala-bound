@@ -68,12 +68,12 @@ The `-\/` indicates a variable bound in the outer scope. The `-\/` indicates a f
     
 The part that is the outer scope is `Lam(Scope(...V(-\/(()))...))`. The inner scope is `...Lam(Scope(V(\/-(...))))...`. So what used to be `x` is bound in the outer scope and free in the inner scope.
     
-Applying this term to a term and evaluating it to weak-head normal form, we are left with a lambda term with a single bound variable.
+Applying this term to the named variable `V("a")` we are left with a lambda term whose free variable has been instantiated to `V("a")`.
 
     scala> val constA = whnf(const(V("a")))
     p: Exp[String] = Lam(Scope(V(\/-(V(a)))))
 
-Applying that to a second term gives us the first term:
+Applying that to a second term gives us the the term we bound to the variable:
 
     scala> val a = whnf(constA(V("b")))
     a: Exp[String] = V(a)
