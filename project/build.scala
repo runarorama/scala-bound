@@ -8,9 +8,13 @@ object build extends Build {
 
   lazy val standardSettings = Defaults.defaultSettings ++ Seq[Sett](
     organization := "bound",
-    version := "0.2-SNAPSHOT",
+    version := "1.1",
     resolvers += "Typesafe Sonatype Snapshots" at "http://repo.typesafe.com/typesafe/sonatype-snapshots/",
+    resolvers += "joshcough bintray maven" at "http://dl.bintray.com/joshcough/maven/",
     scalaVersion := "2.10.2",
+    description := "A Scala library for variable bindings in embedded languages.",
+    licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
+    publishMavenStyle := true,
     crossScalaVersions := Seq("2.9.2", "2.9.3", "2.10.0", "2.10.1", "2.10.2"),
     scalacOptions <++= (scalaVersion) map { sv =>
       val versionDepOpts =
@@ -31,7 +35,8 @@ object build extends Build {
     base = file("core"),
     settings = standardSettings ++ Seq[Sett](
       name := "bound-core",
-      libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0-SNAPSHOT"
+      description := "A Scala library for variable bindings in embedded languages.",
+      libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.2"
     )
   )
 
@@ -41,30 +46,21 @@ object build extends Build {
     dependencies = Seq(core),
     settings     = standardSettings ++ Seq[Sett](
       name := "bound-scalacheck-binding",
-      libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0-SNAPSHOT",
+      libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.2",
       libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.10.0"
     )
   )
 
-  lazy val f0 = {
-    // force sbt to get the latest version of f0
-    // 'sbt update' doesn't seem to get the latest even though this says that it should
-    // http://stackoverflow.com/questions/8864317/how-do-i-refresh-updated-git-dependency-artifacts-in-sbt
-    // so instead we have to go to github and get the latest version.
-    val sha = scala.io.Source.fromURL("https://api.github.com/repos/joshcough/f0/commits?sha=master").
-      takeWhile(_ != ',').mkString.dropWhile(_!=':').drop(2).dropRight(1)
-    RootProject(uri("https://github.com/joshcough/f0.git#" + sha))
-  }
-
   lazy val f0Binding = Project(
     id           = "bound-f0-binding",
     base         = file("f0-binding"),
-    dependencies = Seq(core, f0),
+    dependencies = Seq(core),
     settings     = standardSettings ++ Seq[Sett](
       name := "bound-f0-binding",
-      libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0-SNAPSHOT"
+      libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.2",
+      libraryDependencies += "clarifi" %% "f0" % "1.0"
     )
-  ).dependsOn(f0)
+  )
 
   lazy val tests = Project(
     id = "bound-tests",
@@ -83,9 +79,8 @@ object build extends Build {
     dependencies = Seq(core, scalacheckBinding),
     settings     = standardSettings ++ Seq[Sett](
       name := "bound-examples",
-      libraryDependencies ++= Seq(
-        "org.scalaz" %% "scalaz-core" % "7.0-SNAPSHOT"
-      )
+      libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.2",
+      libraryDependencies += "clarifi" %% "f0" % "1.0"
     )
-  ).dependsOn(f0)
+  )
 }
