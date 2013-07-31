@@ -61,14 +61,14 @@ def whnf[A](e: Exp[A]): Exp[A] = e match {
 ```
 
 We can then construct and evaluate lambda terms in the console. The `const` function contains two nested scopes. Note that the variable names are erased. What remains are two nested scopes.
-The `-\/` indicates a variable bound in the outer scope. The `-\/` indicates a free variable.
+The `-\/` indicates a term bound in the outer scope. The `-\/` indicates a free term.
 
     scala> val const = lam("x", lam("y", V("x")))
     const: Exp[String] = Lam(Scope(Lam(Scope(V(\/-(V(-\/(()))))))))
     
 The part that is the outer scope is `Lam(Scope(...V(-\/(()))...))`. The inner scope is `...Lam(Scope(V(\/-(...))))...`. So what used to be `x` is bound in the outer scope and free in the inner scope.
     
-Applying this term to the named variable `V("a")` we are left with a lambda term whose free variable has been instantiated to `V("a")`.
+Applying this term to the named variable `V("a")` we are left with a lambda term whose free term has been instantiated to `V("a")`.
 
     scala> val constA = whnf(const(V("a")))
     p: Exp[String] = Lam(Scope(V(\/-(V(a)))))
