@@ -15,7 +15,9 @@ import scalaz.std.string._
 import bound._
 
 // An untyped lambda calculus
-sealed trait Exp[+A]
+sealed trait Exp[+A] {
+  def apply[B >: A](arg: Exp[B]): Exp[B] = App(this, arg)
+}
 case class V[+A](a: A) extends Exp[A]
 case class App[+A](fn: Exp[A], arg: Exp[A]) extends Exp[A]
 case class Lam[+A](s: Scope[Unit, Exp, A]) extends Exp[A]
@@ -49,6 +51,6 @@ We can then construct and evaluate lambda terms in the console. The `const` func
     scala> val const = lam("x", lam("y", V("x")))
     const: Exp[String] = Lam(Scope(Lam(Scope(V(\/-(V(-\/(()))))))))
 
-    scala> val a = whnf(App(App(const, V("x")), V("y")))
+    scala> val a = whnf(const(V("x"))(V("y")))
     a: Exp[String] = V(x)
 
