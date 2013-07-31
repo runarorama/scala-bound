@@ -1,13 +1,27 @@
 Bound
 =====
 
-A Scala port of [Edward Kmett's Bound library for Haskell](https://github.com/ekmett/bound).
+A library for developing languages with scoped binders (like forall or lambda).
+
+This is a Scala port of [Edward Kmett's Bound library for Haskell](https://github.com/ekmett/bound).
+
+Getting started
+---------------
+
+###Add this your build.sbt file:###
+
+```
+resolvers += "Runar's Bintray Repo" at "http://dl.bintray.com/runarorama/maven/"
+
+libraryDependencies += "bound" %% "bound-core" % "1.1"
+```
 
 Binary packages available at https://bintray.com/runarorama/maven/bound
 
 This library provides convenient combinators for working with "locally-nameless" terms. These can be useful when writing a type checker, evaluator, parser, or pretty-printer for terms that contain binders like forall or lambda. They ease the task of avoiding variable capture and testing for alpha-equivalence.
 
-Example:
+Example
+-------
 
 ```scala
 import scalaz._
@@ -46,11 +60,17 @@ def whnf[A](e: Exp[A]): Exp[A] = e match {
 }
 ```
 
-We can then construct and evaluate lambda terms in the console. The `const` function contains two nested scopes. The term `"x"` is free in the inner scope (indicated by `\/-`) and bound in the outer scope (indicated by `-\/`).
+We can then construct and evaluate lambda terms in the console. The `const` function contains two nested scopes. The term `"x"` is free in the inner scope (indicated by `\/-`) and bound in the outer scope (indicated by `-\/`). Note that the variable names are erased.
 
     scala> val const = lam("x", lam("y", V("x")))
     const: Exp[String] = Lam(Scope(Lam(Scope(V(\/-(V(-\/(()))))))))
+    
+Applying this term to a term and evaluating it to weak-head normal form, we are left with a lambda term with a single bound variable.
 
-    scala> val a = whnf(const(V("x"))(V("y")))
-    a: Exp[String] = V(x)
+    scala> val constA = whnf(const(V("a")))
+    p: Exp[String] = Lam(Scope(V(\/-(V(a)))))
 
+Applying that to a second term gives us the first term:
+
+    scala> val a = whnf(constA(V("b")))
+    a: Exp[String] = V(a)
