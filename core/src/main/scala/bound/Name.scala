@@ -1,10 +1,9 @@
 package bound
 
-import language.higherKinds
-
 import scalaz.{Name => _, _}
 import scalaz.syntax.monad._
 import scalaz.syntax.equal._
+import scalaz.syntax.show._
 
 case class Name[N,B](name: N, value: B)
 
@@ -12,7 +11,7 @@ object Name {
   // Type-class Instances //
 
   implicit def nameShow[N:Show,B:Show]: Show[Name[N,B]] = new Show[Name[N,B]] {
-    override def shows(n: Name[N,B]) = s"Name %s %s".format(n.name, n.value)
+    override def shows(n: Name[N,B]) = "Name %s %s".format(n.name.shows, n.value.shows)
   }
 
   implicit def nameOrder[N, B: Order]: Order[Name[N,B]] = new Order[Name[N,B]] {
