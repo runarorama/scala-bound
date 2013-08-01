@@ -58,7 +58,7 @@ object build extends Build {
     settings     = standardSettings ++ Seq[Sett](
       name := "bound-f0-binding",
       libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.2",
-      libraryDependencies += "clarifi" %% "f0" % "1.0"
+      libraryDependencies += "com.clarifi" %% "f0" % "1.0.1"
     )
   )
 
@@ -80,7 +80,7 @@ object build extends Build {
     settings     = standardSettings ++ Seq[Sett](
       name := "bound-examples",
       libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.2",
-      libraryDependencies += "clarifi" %% "f0" % "1.0"
+      libraryDependencies += "com.clarifi" %% "f0" % "1.0.1"
     )
   )
 }
