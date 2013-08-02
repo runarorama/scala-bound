@@ -20,16 +20,14 @@ object build extends Build {
         if (sv startsWith "2.9") Seq()
         else Seq("-feature", "-language:higherKinds", "-language:implicitConversions")
       Seq("-deprecation", "-unchecked") ++ versionDepOpts
-    }
+    },
+    libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.2"
   )
 
   lazy val bound = Project(
     id = "bound",
     base = file("."),
-    settings = standardSettings ++ Seq[Sett](
-       name := "bound",
-       libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.2"
-    ),
+    settings = standardSettings ++ Seq[Sett](name := "bound"),
     aggregate = Seq(core, scalacheckBinding, f0Binding, tests)
   )
 
@@ -38,8 +36,7 @@ object build extends Build {
     base = file("core"),
     settings = standardSettings ++ Seq[Sett](
       name := "bound-core",
-      description := "A Scala library for variable bindings in embedded languages.",
-      libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.2"
+      description := "A Scala library for variable bindings in embedded languages."
     )
   )
 
@@ -49,7 +46,6 @@ object build extends Build {
     dependencies = Seq(core),
     settings     = standardSettings ++ Seq[Sett](
       name := "bound-scalacheck-binding",
-      libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.2",
       libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.10.0"
     )
   )
@@ -60,7 +56,6 @@ object build extends Build {
     dependencies = Seq(core),
     settings     = standardSettings ++ Seq[Sett](
       name := "bound-f0-binding",
-      libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.2",
       libraryDependencies += "com.clarifi" %% "f0" % "1.0.1"
     )
   )
@@ -82,7 +77,6 @@ object build extends Build {
     dependencies = Seq(core, scalacheckBinding),
     settings     = standardSettings ++ Seq[Sett](
       name := "bound-examples",
-      libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.2",
       libraryDependencies += "com.clarifi" %% "f0" % "1.0.1"
     )
   )
