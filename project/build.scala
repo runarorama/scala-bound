@@ -10,7 +10,6 @@ object build extends Build {
     organization := "bound",
     version := "1.2",
     resolvers += "Typesafe Sonatype Snapshots" at "http://repo.typesafe.com/typesafe/sonatype-snapshots/",
-    resolvers += "joshcough bintray maven" at "http://dl.bintray.com/joshcough/maven/",
     scalaVersion := "2.10.2",
     description := "A Scala library for variable bindings in embedded languages.",
     licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
@@ -27,6 +26,10 @@ object build extends Build {
   lazy val bound = Project(
     id = "bound",
     base = file("."),
+    settings = standardSettings ++ Seq[Sett](
+       name := "bound",
+       libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.2"
+    ),
     aggregate = Seq(core, scalacheckBinding, f0Binding, tests)
   )
 
