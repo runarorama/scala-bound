@@ -27,8 +27,11 @@ object build extends Build {
   lazy val bound = Project(
     id = "bound",
     base = file("."),
-    settings = standardSettings ++ Seq[Sett](name := "bound"),
-    aggregate = Seq(core, scalacheckBinding, f0Binding, tests)
+    settings = standardSettings ++ Seq[Sett](
+      name := "bound",
+      publishArtifact := false,
+    ),
+    aggregate = Seq(core, scalacheckBinding, f0Binding, tests, examples)
   )
 
   lazy val core = Project(
@@ -77,6 +80,7 @@ object build extends Build {
     dependencies = Seq(core, scalacheckBinding),
     settings     = standardSettings ++ Seq[Sett](
       name := "bound-examples",
+      publishArtifact := false,
       libraryDependencies += "com.clarifi" %% "f0" % "1.0.1"
     )
   )
