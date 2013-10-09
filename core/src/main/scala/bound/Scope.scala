@@ -19,8 +19,10 @@ abstract class Scope[+B,F[+_],+A] {
       case F(a) => a flatMap (v => f(v).unscope)
     })
 
-  def traverse[M[+_],C](f: A => M[C])(implicit M: Applicative[M], T: Traverse[F]): M[Scope[B,F,C]] =
-    unscope traverse (_ traverse (_ traverse f)) map (Scope(_))
+  def traverse[M[_],BB >: B,C](f: A => M[C])(implicit M: Applicative[M], T: Traverse[F]): M[Scope[BB,F,C]] = {
+    val ertraverse = Traverse[({type λ[α] = Var[B, α]})#λ] // \/#traverse broken until scalaz 7.1
+    unscope traverse (ertraverse.traverse(_)(_ traverse f)) map (Scope(_))
+  }
 
   def foldMap[M](f: A => M)(implicit F: Foldable[F], M: Monoid[M]): M =
     unscope foldMap (_ foldMap (_ foldMap f))
@@ -99,7 +101,7 @@ object Scope {
 
   implicit def scopeTraverse[F[+_]:Traverse,D]: Traverse[({type λ[α] = Scope[D,F,α]})#λ] =
     new Traverse[({type λ[α] = Scope[D,F,α]})#λ] {
-      def traverseImpl[M[+_]:Applicative,A,B](a: Scope[D,F,A])(f: A => M[B]) = a traverse f
+      def traverseImpl[M[_]:Applicative,A,B](a: Scope[D,F,A])(f: A => M[B]) = a traverse f
     }
 
   implicit def scopeFoldable[F[+_]:Foldable,D]: Foldable[({type λ[α] = Scope[D,F,α]})#λ] =
