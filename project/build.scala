@@ -29,7 +29,7 @@ object build extends Build {
     base = file("."),
     settings = standardSettings ++ Seq[Sett](
       name := "bound",
-      publishArtifact := false,
+      publishArtifact := false
     ),
     aggregate = Seq(core, scalacheckBinding, f0Binding, tests, examples)
   )
