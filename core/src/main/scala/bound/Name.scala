@@ -32,7 +32,7 @@ object Name {
   implicit def nameComonad[N]: Comonad[({type λ[α]=Name[N,α]})#λ] =
     new Comonad[({type λ[α]=Name[N,α]})#λ] {
       def copoint[A](p: Name[N,A]) = p.value
-      def cojoin[A](p: Name[N,A]) = Name(p.name, p)
+      override def cojoin[A](p: Name[N,A]) = Name(p.name, p)
       def map[A,B](p: Name[N,A])(f: A => B) = Name(p.name, f(p.value))
       def cobind[A,B](p: Name[N,A])(f: Name[N,A] => B) =
         Name(p.name, f(p))

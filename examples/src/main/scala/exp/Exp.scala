@@ -28,8 +28,8 @@ data Exp a
 //https://github.com/ekmett/bound/blob/master/examples/Simple.hs
 object Exp {
 
-  sealed trait Exp[+A] {
-    def *[B >: A](e:Exp[B]) = App(this, e)
+  sealed trait Exp[A] {
+    def *(e:Exp[A]) = App(this, e)
   }
 
   object V {
@@ -39,7 +39,7 @@ object Exp {
       case _ => None
     }
   }
-  class V[+A](a: => A) extends Exp[A]{
+  class V[A](a: => A) extends Exp[A]{
     lazy val get = a
     override def toString = s"V($a)"
   }
@@ -51,7 +51,7 @@ object Exp {
       case _ => None
     }
   }
-  class Lam[+A](s: => Scope[Unit, Exp, A]) extends Exp[A] {
+  class Lam[A](s: => Scope[Unit, Exp, A]) extends Exp[A] {
     lazy val get = s
     override def toString = s"Lam($s)"
   }
@@ -63,7 +63,7 @@ object Exp {
       case _ => None
     }
   }
-  class App[+A](f: => Exp[A], x: => Exp[A]) extends Exp[A] {
+  class App[A](f: => Exp[A], x: => Exp[A]) extends Exp[A] {
     lazy val get = (f, x)
     override def toString = s"App($f, $x)"
   }
@@ -75,7 +75,7 @@ object Exp {
       case _ => None
     }
   }
-  class Let[+A](bindings: => List[Scope[Int, Exp, A]], body: => Scope[Int, Exp, A]) extends Exp[A]{
+  class Let[A](bindings: => List[Scope[Int, Exp, A]], body: => Scope[Int, Exp, A]) extends Exp[A]{
     lazy val get = (bindings, body)
     override def toString = s"Let($bindings, $body)"
   }
@@ -91,7 +91,7 @@ object Exp {
   }
 
   implicit def expTraversable: Traverse[Exp] = new Traverse[Exp]{
-    def traverseImpl[F[+_], A, B](exp : Exp[A])(f : A => F[B])(implicit A: Applicative[F]) : F[Exp[B]] = exp match {
+    def traverseImpl[F[_], A, B](exp : Exp[A])(f : A => F[B])(implicit A: Applicative[F]) : F[Exp[B]] = exp match {
       case V(a)       => f(a).map(V(_))
       case App(x, y)  => A.apply2(traverse(x)(f), traverse(y)(f))(App(_, _))
       case Lam(e)     => e.traverse(f).map(Lam(_))
@@ -99,10 +99,10 @@ object Exp {
     }
   }
 
-  def instantiateR[B,F[+_],A](f: B => F[A])(s: Scope[B,F,A])(implicit M: Monad[F]): F[A] =
+  def instantiateR[B,F[_],A](f: B => F[A])(s: Scope[B,F,A])(implicit M: Monad[F]): F[A] =
     instantiate(s)(f)
 
-  def abstractR[B,F[+_],A](f : A => Option[B])(w : F[A])(implicit M: scalaz.Monad[F]) = abstrakt(w)(f)
+  def abstractR[B,F[_],A](f : A => Option[B])(w : F[A])(implicit M: scalaz.Monad[F]) = abstrakt(w)(f)
 
   def nf[A](e:Exp[A]): Exp[A] = e match {
     case V(_)       => e
@@ -130,10 +130,10 @@ object Exp {
       whnf(inst(b))
   }
 
-  //  A smart constructor for Lamb
+  //  A smart constructor for Lam
   //  >>> lam "y" (lam "x" (V "x" :@ V "y"))
-  //  Lamb (Scope (Lamb (Scope (V (B ()) :@ V (F (V (B ())))))))
-  def lam[A,F[+_]](v: A, b: Exp[A])(implicit m: Monad[F], e: Equal[A]) = Lam(abstract1(v,b))
+  //  Lam (Scope (Lam (Scope (V (B ()) :@ V (F (V (B ())))))))
+  def lam[A](v: A, b: Exp[A])(implicit e: Equal[A]) = Lam(abstract1(v,b))
 
   def let_[A](es: List[(A, Exp[A])], e:Exp[A]): Exp[A] = es match {
     case Nil => e
@@ -146,15 +146,15 @@ object Exp {
   }
 
   implicit class PimpedExp(e: Exp[String]) {
-      def !:(s:String) = lam[String, Exp](s, e)
+      def !:(s:String) = lam(s, e)
   }
 
-  def closed[F[+_], A, B](fa:F[A])(implicit T: Traverse[F]): Option[F[B]] =
+  def closed[F[_], A, B](fa:F[A])(implicit T: Traverse[F]): Option[F[B]] =
     fa.traverse(Function.const(None))
 
   //  true :: Exp String
   //  true = lam "F" $ lam "T" $ V "T"
-  val True: Exp[String] = lam[String, Exp]("F", lam("T", V("T")))
+  val True: Exp[String] = lam("F", lam("T", V("T")))
 
   val cooked = closed[Exp, String, String](let_(List(
     ("False",  "f" !: "t" !: V("f"))
