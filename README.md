@@ -13,7 +13,7 @@ Getting started
 ```
 resolvers += "Runar's Bintray Repo" at "http://dl.bintray.com/runarorama/maven/"
 
-libraryDependencies += "bound" %% "bound-core" % "1.1"
+libraryDependencies += "bound" %% "bound-core" % "1.3.0"
 ```
 
 Binary packages available at https://bintray.com/runarorama/maven/bound
