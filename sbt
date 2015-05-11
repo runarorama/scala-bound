@@ -4,8 +4,8 @@
 # Author: Paul Phillips <paulp@typesafe.com>
 
 # todo - make this dynamic
-declare -r sbt_release_version=0.11.3
-declare -r sbt_snapshot_version=0.13.0-SNAPSHOT
+declare -r sbt_release_version=0.13.8
+declare -r sbt_snapshot_version=0.13.9-SNAPSHOT
 
 unset sbt_jar sbt_dir sbt_create sbt_snapshot sbt_launch_dir
 unset scala_version java_home sbt_explicit_version

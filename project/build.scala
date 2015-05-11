@@ -9,6 +9,7 @@ object build extends Build {
   lazy val standardSettings = Defaults.defaultSettings ++ Seq[Sett](
     organization := "bound",
     version := "1.3.0",
+    resolvers += Resolver.jcenterRepo,
     resolvers += "Typesafe Sonatype Snapshots" at "http://repo.typesafe.com/typesafe/sonatype-snapshots/",
     scalaVersion := "2.11.6",
     description := "A Scala library for variable bindings in embedded languages.",
@@ -59,7 +60,7 @@ object build extends Build {
     dependencies = Seq(core),
     settings     = standardSettings ++ Seq[Sett](
       name := "bound-f0-binding",
-      libraryDependencies += "com.clarifi" %% "f0" % "1.1"
+      libraryDependencies += "com.clarifi" %% "f0" % "1.1.3"
     )
   )
 
@@ -81,7 +82,7 @@ object build extends Build {
     settings     = standardSettings ++ Seq[Sett](
       name := "bound-examples",
       publishArtifact := false,
-      libraryDependencies += "com.clarifi" %% "f0" % "1.1"
+      libraryDependencies += "com.clarifi" %% "f0" % "1.1.3"
     )
   )
 }
