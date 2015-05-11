@@ -67,7 +67,32 @@ abstract class Scope[B,F[_],A] {
   override def toString = Scope.scopeShow[Any,Any,Any](showA, showA, showA, showA).shows(this.asInstanceOf[Scope[Any,Any,Any]])
 }
 
-object Scope {
+sealed abstract class ScopeInstances0 {
+  implicit def scopeFunctor[F[_]:Functor,D]: Functor[({type λ[α] = Scope[D,F,α]})#λ] =
+    new Functor[({type λ[α] = Scope[D,F,α]})#λ] {
+      val M = Functor[F]
+      override def map[A,B](a: Scope[D,F,A])(f: A => B) = a map f
+    }
+}
+
+sealed abstract class ScopeInstances extends ScopeInstances0 {
+  implicit def scopeMonad[F[_]:Monad,D]: Monad[({type λ[α] = Scope[D,F,α]})#λ] =
+    new Monad[({type λ[α] = Scope[D,F,α]})#λ] {
+      val M = Monad[F]
+      override def map[A,B](a: Scope[D,F,A])(f: A => B) = a map f
+      def point[A](a: => A) = Scope(M.pure(F(M.pure(a))))
+      def bind[A,B](e: Scope[D,F,A])(f: A => Scope[D,F,B]) = e flatMap f
+    }
+
+  implicit def scopeFoldable[F[_]:Foldable,D]: Foldable[({type λ[α] = Scope[D,F,α]})#λ] =
+    new Foldable[({type λ[α] = Scope[D,F,α]})#λ] {
+      val T = Foldable[F]
+      override def foldMap[A,M:Monoid](a: Scope[D,F,A])(f: A => M) = a foldMap f
+      def foldRight[A,B](a: Scope[D,F,A], z: => B)(f: (A, => B) => B) = a.foldRight(z)(f)
+    }
+}
+
+object Scope extends ScopeInstances {
   def apply[B,F[_],A](f: F[Var[B,F[A]]]): Scope[B,F,A] = new Scope[B,F,A] {
     def unscope = f
   }
@@ -91,30 +116,9 @@ object Scope {
         E1F.equal(fromScope(a), fromScope(b))
     }
 
-  implicit def scopeMonad[F[_]:Monad,D]: Monad[({type λ[α] = Scope[D,F,α]})#λ] =
-    new Monad[({type λ[α] = Scope[D,F,α]})#λ] {
-      val M = Monad[F]
-      override def map[A,B](a: Scope[D,F,A])(f: A => B) = a map f
-      def point[A](a: => A) = Scope(M.pure(F(M.pure(a))))
-      def bind[A,B](e: Scope[D,F,A])(f: A => Scope[D,F,B]) = e flatMap f
-    }
-
   implicit def scopeTraverse[F[_]:Traverse,D]: Traverse[({type λ[α] = Scope[D,F,α]})#λ] =
     new Traverse[({type λ[α] = Scope[D,F,α]})#λ] {
       def traverseImpl[M[_]:Applicative,A,B](a: Scope[D,F,A])(f: A => M[B]) = a traverse f
-    }
-
-  implicit def scopeFoldable[F[_]:Foldable,D]: Foldable[({type λ[α] = Scope[D,F,α]})#λ] =
-    new Foldable[({type λ[α] = Scope[D,F,α]})#λ] {
-      val T = Foldable[F]
-      override def foldMap[A,M:Monoid](a: Scope[D,F,A])(f: A => M) = a foldMap f
-      def foldRight[A,B](a: Scope[D,F,A], z: => B)(f: (A, => B) => B) = a.foldRight(z)(f)
-    }
-
-  implicit def scopeFunctor[F[_]:Functor,D]: Functor[({type λ[α] = Scope[D,F,α]})#λ] =
-    new Functor[({type λ[α] = Scope[D,F,α]})#λ] {
-      val M = Functor[F]
-      override def map[A,B](a: Scope[D,F,A])(f: A => B) = a map f
     }
 
   implicit def scopeMonadTrans[B]: MonadTrans[({type λ[φ[_],α] = Scope[B,φ,α]})#λ] =
