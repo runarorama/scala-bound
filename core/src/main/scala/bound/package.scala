@@ -86,7 +86,7 @@ package object bound {
     }))
 
   /** Abstract over a single variable */
-  def abstract1Name[F[_]:Monad,A:Equal,B](a: A, t: F[A])(f: A => Option[B]): Scope[Name[A,Unit],F,A] =
+  def abstract1Name[F[_]:Monad,A:Equal](a: A, t: F[A]): Scope[Name[A,Unit],F,A] =
     abstractName(t)(b => if (a === b) Some(()) else None)
 
   /**
