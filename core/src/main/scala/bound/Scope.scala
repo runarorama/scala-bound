@@ -63,6 +63,13 @@ abstract class Scope[B,F[_],A] {
       case B(b) => M.pure(B(b))
     }
 
+  /** Simultaneously substitute bound and free variables. */
+  def splat[C](fb: B => F[C], fv: A => F[C])(implicit M: Monad[F]): F[C] =
+    unscope flatMap {
+      case -\/(b)  => fb(b)
+      case \/-(tm) => tm flatMap fv
+    }
+
   import Show._
   override def toString = Scope.scopeShow[Any,Any,Any](showA, showA, showA, showA).shows(this.asInstanceOf[Scope[Any,Any,Any]])
 }
