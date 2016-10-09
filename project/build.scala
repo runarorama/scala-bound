@@ -11,6 +11,7 @@ object build extends Build {
     version := "1.3.0",
     resolvers += Resolver.jcenterRepo,
     resolvers += "Typesafe Sonatype Snapshots" at "http://repo.typesafe.com/typesafe/sonatype-snapshots/",
+    resolvers += "f0 resolver" at "https://dl.bintray.com/joshcough/maven",
     scalaVersion := "2.11.6",
     description := "A Scala library for variable bindings in embedded languages.",
     licenses += ("MIT", url("http://opensource.org/licenses/MIT")),
