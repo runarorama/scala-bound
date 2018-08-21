@@ -73,7 +73,7 @@ Applying this term to the named variable `V("a")` we are left with a lambda term
     scala> val constA = whnf(const(V("a")))
     p: Exp[String] = Lam(Scope(V(\/-(V(a)))))
 
-Applying that to a second term gives us the the term we bound to the variable:
+Applying that to a second term gives us the term we bound to the variable:
 
     scala> val a = whnf(constA(V("b")))
     a: Exp[String] = V(a)
